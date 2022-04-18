@@ -9,6 +9,9 @@ class URL(models.Model):
     hashed_url = models.SlugField(max_length=200, null=False, unique=True)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"{self.long_url} - {self.hashed_url}"
+
     @staticmethod
     def _shorten(long_url: str) -> str:
         return md5(long_url.encode()).hexdigest()[:9]

@@ -12,8 +12,12 @@ install:
 	pip install -r requirements.txt
 	pre-commit install
 
+.PHONY: db_init
+db_init:
+	docker-compose up -d database
+
 .PHONY: migrate
-migrate:
+migrate: db_init
 	python manage.py migrate
 
 .PHONY: test
@@ -21,5 +25,5 @@ test:
 	python manage.py test
 
 .PHONY: run
-run:
+run: migrate
 	python manage.py runserver

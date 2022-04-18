@@ -11,3 +11,15 @@ install:
 	python -m pip install --upgrade pip
 	pip install -r requirements.txt
 	pre-commit install
+
+.PHONY: migrate
+migrate:
+	python manage.py migrate
+
+.PHONY: test
+test:
+	python manage.py test
+
+.PHONY: run
+run:
+	python manage.py runserver

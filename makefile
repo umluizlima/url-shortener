@@ -20,6 +20,10 @@ db_init:
 migrate: db_init
 	python manage.py migrate
 
+.PHONY: generate_migrations
+generate_migrations: migrate
+	python manage.py makemigrations
+
 .PHONY: test
 test:
 	python manage.py test

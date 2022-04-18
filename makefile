@@ -4,3 +4,9 @@ environment:
 	pyenv uninstall --force url-shortener
 	pyenv virtualenv 3.10.0 --force url-shortener
 	pyenv local url-shortener
+
+.PHONY: install
+install:
+	pip freeze | xargs -r pip uninstall -y
+	python -m pip install --upgrade pip
+	pip install -r requirements.txt

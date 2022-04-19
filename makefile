@@ -25,7 +25,7 @@ generate_migrations: migrate
 	python manage.py makemigrations
 
 .PHONY: test
-test:
+test: migrate
 	python manage.py test
 
 .PHONY: run

@@ -91,6 +91,13 @@ class URLIndexViewTests(TestCase):
         self.assertFormError(response, "form", "long_url", ["Enter a valid URL."])
 
     @patch("shortener.models.generate_hash", mock_generate_hash)
+    def test_persists_shortened_url(self):
+        self.client.post(
+            reverse("shortener:index"), data={"long_url": "https://google.com"}
+        )
+        self.assertTrue(URL.objects.filter(hashed_url=mock_generate_hash()).exists())
+
+    @patch("shortener.models.generate_hash", mock_generate_hash)
     def test_shows_short_url_after_submit(self):
         response = self.client.post(
             reverse("shortener:index"), data={"long_url": "https://google.com"}

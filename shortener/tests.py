@@ -1,28 +1,48 @@
+from unittest.mock import patch
+
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from django.test import TestCase
 from django.urls import reverse
+from shortener.models import URL
+from shortener.utils import generate_hash
 
-from .models import URL
-from .utils import generate_hash
+
+def mock_generate_hash():
+    return "abcdef"
+
+
+def create_url(long_url: str):
+    return URL.objects.create(long_url=long_url)
 
 
 class URLModelTests(TestCase):
+    @patch("shortener.models.generate_hash", mock_generate_hash)
     def test_url_is_shortened_on_save(self):
         long_url = "https://google.com"
-        short_url = URL._shorten(long_url)
+        short_url = mock_generate_hash()
         url = URL(long_url=long_url)
         url.save()
         self.assertEqual(url.hashed_url, short_url)
+
+    @patch("shortener.models.generate_hash", mock_generate_hash)
+    def test_raises_error_on_duplicate_hash(self):
+        long_url = "https://google.com"
+        create_url(long_url)
+        url = URL(long_url=long_url)
+        self.assertRaises(IntegrityError, url.save)
+
+    def test_saves_same_url_with_different_hashes(self):
+        long_url = "https://google.com"
+        url_1 = create_url(long_url)
+        url_2 = create_url(long_url)
+        self.assertNotEqual(url_1.hashed_url, url_2.hashed_url)
 
     def test_rejects_invalid_url(self):
         long_url = "google"
         url = URL(long_url=long_url)
         self.assertRaises(ValidationError, url.save)
-
-
-def create_url(long_url: str):
-    return URL.objects.create(long_url=long_url)
 
 
 class URLRedirectViewTests(TestCase):

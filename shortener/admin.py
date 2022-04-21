@@ -3,10 +3,10 @@ from django.contrib import admin
 from .models import URL
 
 
+@admin.register(URL)
 class URLAdmin(admin.ModelAdmin):
-    exclude = ["hashed_url"]
     list_filter = ["created_at"]
     search_fields = ["long_url"]
 
-
-admin.site.register(URL, URLAdmin)
+    def get_exclude(self, request, obj=None):
+        return self.exclude if obj else ["hashed_url"]

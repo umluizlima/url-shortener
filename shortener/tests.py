@@ -1,8 +1,10 @@
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.test import TestCase
 from django.urls import reverse
 
 from .models import URL
+from .utils import generate_hash
 
 
 class URLModelTests(TestCase):
@@ -44,3 +46,14 @@ class URLRedirectViewTests(TestCase):
         )
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response.url, url.long_url)
+
+
+class GenerateHashTests(TestCase):
+    def test_generates_string_of_settings_length(self):
+        generated_hash = generate_hash()
+        self.assertEqual(len(generated_hash), settings.HASH_LENGTH)
+
+    def test_generated_string_uses_settings_characters(self):
+        generated_hash = generate_hash()
+        for character in generated_hash:
+            self.assertIn(character, settings.HASH_CHARACTERS)

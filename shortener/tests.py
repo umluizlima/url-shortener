@@ -77,3 +77,22 @@ class GenerateHashTests(TestCase):
         generated_hash = generate_hash()
         for character in generated_hash:
             self.assertIn(character, settings.HASH_CHARACTERS)
+
+
+class URLIndexViewTests(TestCase):
+    def test_field_long_url_is_required(self):
+        response = self.client.post(reverse("shortener:index"), data={"abc": "def"})
+        self.assertFormError(response, "form", "long_url", ["This field is required."])
+
+    def test_field_long_url_must_be_url(self):
+        response = self.client.post(
+            reverse("shortener:index"), data={"long_url": "def"}
+        )
+        self.assertFormError(response, "form", "long_url", ["Enter a valid URL."])
+
+    @patch("shortener.models.generate_hash", mock_generate_hash)
+    def test_shows_short_url_after_submit(self):
+        response = self.client.post(
+            reverse("shortener:index"), data={"long_url": "https://google.com"}
+        )
+        self.assertContains(response, mock_generate_hash())

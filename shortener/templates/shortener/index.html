@@ -1,0 +1,11 @@
+<form action="{% url 'shortener:index' %}" method="post">
+  {% csrf_token %}
+  <fieldset>
+      <legend><h1>Shorten URL</h1></legend>
+      {{ form }}
+  </fieldset>
+  <input type="submit" value="Shorten">
+</form>
+{% if url %}
+<p>{{ url.long_url }} was shortened to <a href="{% url 'shortener:redirect' url.hashed_url %}">{{request.get_host}}{% url 'shortener:redirect' url.hashed_url %}</a>
+{% endif %}

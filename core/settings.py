@@ -13,7 +13,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import string
 from pathlib import Path
 
-from pydantic import BaseSettings, PostgresDsn
+from pydantic import BaseSettings, PostgresDsn, SecretStr
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -24,6 +24,7 @@ class SettingsFromEnvironment(BaseSettings):
     DEBUG: bool = False
     HASH_CHARACTERS: str = string.ascii_letters + string.digits
     HASH_LENGTH: int = 6
+    SECRET_KEY: SecretStr
 
     class Config:
         env_file = str(BASE_DIR / ".env")
@@ -37,7 +38,7 @@ CONFIG = SettingsFromEnvironment()
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = "django-insecure-81)#3hyq$^w9!b=xmc46v@uoqp@8%g5jy2(pw9x-ycy60kv8#$"
+SECRET_KEY = CONFIG.SECRET_KEY.get_secret_value()
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = CONFIG.DEBUG

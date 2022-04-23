@@ -13,8 +13,22 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 import string
 from pathlib import Path
 
+from pydantic import BaseSettings, PostgresDsn
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+
+class SettingsFromEnvironment(BaseSettings):
+    DATABASE_URL: PostgresDsn
+    DEBUG: bool = False
+
+    class Config:
+        env_file = str(BASE_DIR / ".env")
+        case_sensitive = True
+
+
+config = SettingsFromEnvironment()
 
 
 # Quick-start development settings - unsuitable for production
@@ -24,7 +38,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = "django-insecure-81)#3hyq$^w9!b=xmc46v@uoqp@8%g5jy2(pw9x-ycy60kv8#$"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config.DEBUG
 
 ALLOWED_HOSTS = []
 
@@ -78,10 +92,10 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "HOST": "localhost",
-        "NAME": "url-shortener",
-        "USER": "postgres",
-        "PASSWORD": "postgres",
+        "HOST": config.DATABASE_URL.host,
+        "NAME": config.DATABASE_URL.path[1:],
+        "USER": config.DATABASE_URL.user,
+        "PASSWORD": config.DATABASE_URL.password,
     }
 }
 

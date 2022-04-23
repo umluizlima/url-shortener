@@ -1,4 +1,6 @@
-from django.shortcuts import get_object_or_404, render
+from django.http import HttpResponseRedirect
+from django.shortcuts import get_object_or_404
+from django.urls import reverse
 from django.views import generic
 
 from .forms import URLCreateForm
@@ -22,14 +24,7 @@ class URLIndexView(generic.FormView):
             return self.form_invalid(form)
 
         url = URL.objects.create(long_url=form.cleaned_data["long_url"])
-        return render(
-            request,
-            self.template_name,
-            {
-                "form": self.form_class(),
-                "url": url,
-            },
-        )
+        return HttpResponseRedirect(reverse("shortener:detail", args=[url.hashed_url]))
 
 
 class URLDetailView(generic.DetailView):

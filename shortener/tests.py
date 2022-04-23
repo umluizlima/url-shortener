@@ -98,11 +98,13 @@ class URLIndexViewTests(TestCase):
         self.assertTrue(URL.objects.filter(hashed_url=mock_generate_hash()).exists())
 
     @patch("shortener.models.generate_hash", mock_generate_hash)
-    def test_shows_short_url_after_submit(self):
+    def test_redirects_to_detail_after_submit(self):
         response = self.client.post(
             reverse("shortener:index"), data={"long_url": "https://google.com"}
         )
-        self.assertContains(response, mock_generate_hash())
+        self.assertRedirects(
+            response, reverse("shortener:detail", args=[mock_generate_hash()])
+        )
 
 
 class URLDetailViewTests(TestCase):

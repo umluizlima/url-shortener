@@ -22,13 +22,15 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 class SettingsFromEnvironment(BaseSettings):
     DATABASE_URL: PostgresDsn
     DEBUG: bool = False
+    HASH_CHARACTERS: str = string.ascii_letters + string.digits
+    HASH_LENGTH: int = 6
 
     class Config:
         env_file = str(BASE_DIR / ".env")
         case_sensitive = True
 
 
-config = SettingsFromEnvironment()
+CONFIG = SettingsFromEnvironment()
 
 
 # Quick-start development settings - unsuitable for production
@@ -38,7 +40,7 @@ config = SettingsFromEnvironment()
 SECRET_KEY = "django-insecure-81)#3hyq$^w9!b=xmc46v@uoqp@8%g5jy2(pw9x-ycy60kv8#$"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config.DEBUG
+DEBUG = CONFIG.DEBUG
 
 ALLOWED_HOSTS = []
 
@@ -92,10 +94,10 @@ WSGI_APPLICATION = "core.wsgi.application"
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "HOST": config.DATABASE_URL.host,
-        "NAME": config.DATABASE_URL.path[1:],
-        "USER": config.DATABASE_URL.user,
-        "PASSWORD": config.DATABASE_URL.password,
+        "HOST": CONFIG.DATABASE_URL.host,
+        "NAME": CONFIG.DATABASE_URL.path[1:],
+        "USER": CONFIG.DATABASE_URL.user,
+        "PASSWORD": CONFIG.DATABASE_URL.password,
     }
 }
 
@@ -140,6 +142,3 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
-
-HASH_CHARACTERS = string.ascii_letters + string.digits
-HASH_LENGTH = 6

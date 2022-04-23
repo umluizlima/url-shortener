@@ -71,12 +71,12 @@ class URLRedirectViewTests(TestCase):
 class GenerateHashTests(TestCase):
     def test_generates_string_of_settings_length(self):
         generated_hash = generate_hash()
-        self.assertEqual(len(generated_hash), settings.HASH_LENGTH)
+        self.assertEqual(len(generated_hash), settings.CONFIG.HASH_LENGTH)
 
     def test_generated_string_uses_settings_characters(self):
         generated_hash = generate_hash()
         for character in generated_hash:
-            self.assertIn(character, settings.HASH_CHARACTERS)
+            self.assertIn(character, settings.CONFIG.HASH_CHARACTERS)
 
 
 class URLIndexViewTests(TestCase):

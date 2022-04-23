@@ -4,4 +4,6 @@ from django.conf import settings
 
 
 def generate_hash() -> str:
-    return "".join(random.choices(settings.HASH_CHARACTERS, k=settings.HASH_LENGTH))
+    return "".join(
+        random.choices(settings.CONFIG.HASH_CHARACTERS, k=settings.CONFIG.HASH_LENGTH)
+    )

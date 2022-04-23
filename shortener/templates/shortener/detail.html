@@ -1,0 +1,6 @@
+<ul>
+  <li>Short URL: <a href="{% url 'shortener:redirect' url.hashed_url %}">{{request.get_host}}{% url 'shortener:redirect' url.hashed_url %}</a></li>
+  <li>Long URL: <a href="{{ url.long_url }}">{{ url.long_url }}</a></li>
+</ul>
+
+<a href="{% url 'shortener:index' %}">Shorten another URL</a>

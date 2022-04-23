@@ -13,7 +13,7 @@ def mock_generate_hash():
     return "abcdef"
 
 
-def create_url(long_url: str):
+def create_url(long_url: str) -> URL:
     return URL.objects.create(long_url=long_url)
 
 
@@ -103,3 +103,31 @@ class URLIndexViewTests(TestCase):
             reverse("shortener:index"), data={"long_url": "https://google.com"}
         )
         self.assertContains(response, mock_generate_hash())
+
+
+class URLDetailViewTests(TestCase):
+    def test_returns_404_if_hash_does_not_exist(self):
+        response = self.client.get(reverse("shortener:detail", args=["abc"]))
+        self.assertEqual(response.status_code, 404)
+
+    def test_returns_200_if_hash_exists(self):
+        url = create_url("https://google.com")
+        response = self.client.get(reverse("shortener:detail", args=[url.hashed_url]))
+        self.assertEqual(response.status_code, 200)
+
+    def test_shows_short_url(self):
+        url = create_url("https://google.com")
+        response = self.client.get(reverse("shortener:detail", args=[url.hashed_url]))
+        self.assertContains(
+            response, reverse("shortener:redirect", args=[url.hashed_url])
+        )
+
+    def test_shows_long_url(self):
+        url = create_url("https://google.com")
+        response = self.client.get(reverse("shortener:detail", args=[url.hashed_url]))
+        self.assertContains(response, url.long_url)
+
+    def test_shows_link_to_index(self):
+        url = create_url("https://google.com")
+        response = self.client.get(reverse("shortener:detail", args=[url.hashed_url]))
+        self.assertContains(response, reverse("shortener:index"))

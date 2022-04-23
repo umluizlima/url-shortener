@@ -30,3 +30,10 @@ class URLIndexView(generic.FormView):
                 "url": url,
             },
         )
+
+
+class URLDetailView(generic.DetailView):
+    model = URL
+    slug_field = "hashed_url"
+    slug_url_kwarg = "hash"
+    template_name = "shortener/detail.html"
